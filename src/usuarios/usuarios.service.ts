@@ -60,6 +60,7 @@ async findOne(id: number) {
 
 // Actualizar usuario
 async update(id: number, updateData: UpdateUsuarioDto) {
+  
   const user = await this.findOne(id);
   if (updateData.password) {
     updateData.password = await bcrypt.hash(updateData.password, 10);

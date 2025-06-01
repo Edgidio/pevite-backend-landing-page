@@ -12,7 +12,7 @@ export class ValidacionPipeIntPipe implements PipeTransform {
         message: "Error en la operación",
         errors: [
           {
-            param: "id-usuario",
+            param: "id",
             message: `El parametro id: '${value}', no es un número válido`
           }
         ],
@@ -27,7 +27,7 @@ export class ValidacionPipeIntPipe implements PipeTransform {
         message: "Error en la operación",
         errors: [
           {
-            param: "id-usuario",
+            param: "id",
             message: `El parametro id: '${value}', debe ser un número entero`
           }
         ],
@@ -42,13 +42,30 @@ export class ValidacionPipeIntPipe implements PipeTransform {
         message: "Error en la operación",
         errors: [
           {
-            param: "id-usuario",
+            param: "id",
             message: `El valor '${value}' no puede ser negativo`
           }
         ],
         date: new Date()
       });
     }
+
+    if (numValue >= 1000) {
+      throw new BadRequestException({
+        status: "error",
+        code: 400,
+        message: "Error en la operación",
+        errors: [
+          {
+            param: "id",
+            message: `El valor '${value}' no puede ser muy alto`
+          }
+        ],
+        date: new Date()
+      });
+    }
+
+    
 
     return numValue;
   }

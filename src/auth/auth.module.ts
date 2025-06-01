@@ -13,7 +13,7 @@ import { JwtStrategy } from './jwt.strategy';
     JwtModule.register({
       secret: process.env.JWT_SECRET || "pevite_JWT_top_secret",
       signOptions: {
-        expiresIn: '1h'
+        expiresIn: '24h'
       }
     })
   ],

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductImages } from '../products.service';
 
 @Entity()
 export class Product {
@@ -11,11 +12,11 @@ export class Product {
   @Column({ type: 'enum', enum: ['Hardware', 'Software', 'IoT', 'Accesorio'] })
   tipoProducto: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  precioMin: string;
+  @Column({ type: 'numeric', nullable: true })
+  precioMin?: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  precioMax: string;
+  @Column({ type: 'numeric', nullable: true })
+  precioMax?: number;
 
   @Column({ type: 'text' })
   descripcionCorta: string;
@@ -29,8 +30,14 @@ export class Product {
   @Column({ default: false })
   enOferta: boolean;
 
-  @Column({ type: 'simple-array', nullable: true }) // Array de máximo 4 imágenes
-  imagenes: string[];
+  // Asegúrate de incluir esta columna:
+  @Column({ type: 'jsonb', nullable: true })
+  imagenes: {
+    original: string[];
+    small: string[];
+    medium: string[];
+    large: string[];
+  };
 
   @Column({ type: 'text', nullable: true })
   etiquetas: string;
@@ -41,34 +48,17 @@ export class Product {
   @Column({ length: 20, nullable: true })
   version: string;
 
-  @Column({ type: 'text', nullable: true })
-  especificacionesTecnicas: string;
-
-  @Column({ type: 'text', nullable: true })
-  compatibilidad: string;
-
-  @Column({ type: 'text', nullable: true })
-  requisitosSistema: string;
-
-  @Column({
-    type: 'enum',
-    enum: ['Perpetua', 'Suscripción', 'Gratuita', 'N/A'],
-    default: 'N/A',
-  })
-  licencia: string;
 
   @Column({ default: true })
   envioGratis: boolean;
 
-  @Column({ default: 12 })
+  @Column({ type: 'integer', default: 12 })
   garantiaMeses: number;
 
-  @Column({ default: 100 })
-  stock: number;
-
-  @Column({ type: 'date', nullable: true })
-  fechaLanzamiento: string;
+  @Column({ type: 'integer', nullable: true })
+  stock?: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fechaCreacion: Date;
+
 }
