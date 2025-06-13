@@ -21,7 +21,7 @@ export class ContactoService {
       const totalRegistros = await this.contactoRepository.count({ where: { email: createContactoDto.email } });
 
 
-      if (totalRegistros >= 5) {
+      if (totalRegistros >= 2) {
         return "¡Gracias por escribirnos! ✉️ Ya recibimos tu mensaje anterior y estamos gestionándolo. Te contactaremos pronto; no es necesario reenviarlo."
       }
 

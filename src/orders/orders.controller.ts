@@ -11,14 +11,15 @@ import {
   InternalServerErrorException,
   BadRequestException,
   UseGuards,
-  UnauthorizedException
+  UnauthorizedException,
+  Put
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { Order } from './entities/order.entity';
 import { ValidacionPipeIntPipe } from 'src/common/pipes/validacion-pipe-int.pipe';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { GetUserWithRole, UserWithRole } from 'src/common/decorators/get-user.decorator';
+import { UpdateProductoStatusDto } from './dto/update-orders-status.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -41,43 +42,61 @@ export class OrdersController {
         })
       }
 
+      if (error.message.includes("La cantidad para el producto")){
+        throw new BadRequestException({
+          statusCode: 400,
+          error: "Bad Request",
+          errors: {
+            productos: "La cantidad para el producto debe ser mayor a 0"
+          }
+        })
+      }
+
       if (error instanceof BadRequestException) {
         throw error;
       }
+
       throw new InternalServerErrorException('Error al crear la orden');
     }
   }
-  /* @UseGuards(JwtAuthGuard) */
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll( @GetUserWithRole() userWithRole: UserWithRole,) {
     try {
-
       return await this.ordersService.findAll();
     } catch (error) {
       throw new InternalServerErrorException('Error al obtener las órdenes');
     }
   }
+
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id', ValidacionPipeIntPipe) id: string, @GetUserWithRole() userWithRole: UserWithRole,) {
     try {
 
+      return await this.ordersService.findOne(+id);
 
-      const order = await this.ordersService.findOne(+id);
-      if (!order) {
-        throw new NotFoundException(`Orden con ID ${id} no encontrada`);
-      }
-      return order;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
+      if (error.message.includes("Orden con ID")) {
+        throw new NotFoundException({
+          statusCode: 404,
+          message: "La ordes no existe"
+        })
       }
-      throw new InternalServerErrorException(`Error al obtener la orden con ID ${id}`);
     }
   }
-  /* @UseGuards(JwtAuthGuard) */
+
+  @Put(":id")
+  async updated(@Param("id", ValidacionPipeIntPipe) id: number, @Body() updateOrderDto: UpdateProductoStatusDto) {
+
+    return this.ordersService.updated(id, updateOrderDto)
+    
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id', ValidacionPipeIntPipe) id: string, @GetUserWithRole() userWithRole: UserWithRole,) {
     try {
@@ -95,10 +114,12 @@ export class OrdersController {
       return await this.ordersService.remove(+id);
       
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
+      if (error.message.includes("Orden con ID")) {
+        throw new NotFoundException({
+          statusCode: 404,
+          message: "La ordes no existe"
+        })
       }
-      throw new InternalServerErrorException(`Error al eliminar la orden con ID ${id}`);
     }
   }
 }

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from './entities/order.entity';
 import { OrderStatus } from './dto/create-order.dto';
+import { UpdateProductoStatusDto } from './dto/update-orders-status.dto';
 
 @Injectable()
 export class OrdersService {
@@ -12,7 +13,7 @@ export class OrdersService {
     private readonly orderRepository: Repository<Order>,
   ) {}
 
-async create(createOrderDto: CreateOrderDto) {
+  async create(createOrderDto: CreateOrderDto) {
     try {
       // Validación de productos
       if (createOrderDto.productos.length === 0) {
@@ -31,6 +32,7 @@ async create(createOrderDto: CreateOrderDto) {
       });
 
       return await this.orderRepository.save(order);
+
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -38,8 +40,6 @@ async create(createOrderDto: CreateOrderDto) {
       throw new BadRequestException('Error al crear la orden: ' + error.message);
     }
   }
-
-// Los demás métodos (findAll, findOne, remove) permanecen igual
 
   async findAll() {
     try {
@@ -51,29 +51,61 @@ async create(createOrderDto: CreateOrderDto) {
 
   async findOne(id: number){
     try {
+
       const order = await this.orderRepository.findOne({ where: { id } });
+
       if (!order) {
         throw new NotFoundException(`Orden con ID ${id} no encontrada`);
       }
+
       return order;
+
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new Error(`Error al buscar la orden con ID ${id}`);
+
+      throw error;
+
+
     }
+  }
+
+  async updated(id: number, status: UpdateProductoStatusDto) {
+    
+    try {
+      const orden_existe = await this.orderRepository.findOne({
+        where: {id: id}
+      })
+
+      if (!orden_existe){
+        throw new BadRequestException("Orden no encontrada")
+      }
+
+      const orden_actualizar = await this.orderRepository.update(id, { status: status.status });
+
+      return "Estado de la orden actualizada"
+      
+    } catch (error) {
+      throw error
+    }
+
   }
 
   async remove(id: number) {
     try {
+
+      const order = await this.orderRepository.findOne({ where: { id } });
+
+      if (!order) {
+        throw new NotFoundException(`Orden con ID ${id} no encontrada`);
+      }
+
       const result = await this.orderRepository.delete(id);
 
       return "Orden eliminada satisfactoriamente!";
+      
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new Error(`Error al eliminar la orden con ID ${id}`);
+
+      throw error;
+    
     }
   }
 }

@@ -9,6 +9,8 @@ import { ContactoModule } from './contacto/contacto.module';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { CartModule } from './cart/cart.module';
 import { OrdersModule } from './orders/orders.module';
+import { TestimonialModule } from './testimonial/testimonial.module';
+import { EquipoModule } from './equipo/equipo.module';
 
 @Module({
   imports: [
@@ -31,7 +33,7 @@ import { OrdersModule } from './orders/orders.module';
       }
     }),
     AuthModule, 
-    UsuariosModule, ServiciosModule, ProductsModule, ContactoModule, SubscribeModule, CartModule, OrdersModule
+    UsuariosModule, ServiciosModule, ProductsModule, ContactoModule, SubscribeModule, CartModule, OrdersModule, TestimonialModule, EquipoModule
   ],
   controllers: [],
   providers: [],
