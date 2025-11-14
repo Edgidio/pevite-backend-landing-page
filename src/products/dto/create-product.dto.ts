@@ -11,14 +11,17 @@ import {
   IsInt,
   Min,
   MaxLength,
+  MinLength,
   IsDefined,
   IsObject,
   ArrayNotEmpty,
+  Matches,
 } from 'class-validator';
 
 export class CreateProductDto {
   @IsNotEmpty({ message: 'titulo| El título del producto es requerido' })
   @IsString({ message: 'titulo| El título debe ser texto válido' })
+  @MinLength(3, { message: 'titulo| El título debe tener al menos 3 caracteres' })
   @MaxLength(100, { message: 'titulo| El título no debe exceder los 100 caracteres' })
   titulo: string;
 
@@ -42,16 +45,23 @@ export class CreateProductDto {
 
   @IsNotEmpty({ message: 'descripcionCorta| La descripción corta es requerida' })
   @IsString({ message: 'descripcionCorta| La descripción debe ser texto válido' })
+  @MinLength(10, { message: 'descripcionCorta| La descripción corta debe tener al menos 10 caracteres' })
   @MaxLength(255, { message: 'descripcionCorta| La descripción corta no debe exceder los 255 caracteres' })
   descripcionCorta: string;
 
   @IsOptional()
   @IsString({ message: 'descripcionLarga| La descripción larga debe ser texto válido' })
+  @MinLength(20, { message: 'descripcionLarga| La descripción larga debe tener al menos 20 caracteres' })
+  @MaxLength(2000, { message: 'descripcionLarga| La descripción larga no debe exceder los 2000 caracteres' })
   descripcionLarga?: string;
 
   @IsNotEmpty({ message: 'sku| El SKU es requerido' })
   @IsString({ message: 'sku| El SKU debe ser texto válido' })
+  @MinLength(3, { message: 'sku| El SKU debe tener al menos 3 caracteres' })
   @MaxLength(50, { message: 'sku| El SKU no debe exceder los 50 caracteres' })
+  @Matches(/^[A-Z0-9-_]+$/i, { 
+    message: 'sku| El SKU solo puede contener letras, números, guiones y guiones bajos' 
+  })
   sku: string;
 
   @IsBoolean({ message: 'enOferta| El campo en oferta debe ser verdadero o falso' })
@@ -60,14 +70,20 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsString({ message: 'etiquetas| Las etiquetas deben ser texto válido' })
+  @MinLength(2, { message: 'etiquetas| Las etiquetas deben tener al menos 2 caracteres' })
+  @MaxLength(200, { message: 'etiquetas| Las etiquetas no deben exceder los 200 caracteres' })
   etiquetas?: string;
 
   @IsOptional()
   @IsString({ message: 'marca| La marca debe ser texto válido' })
+  @MinLength(2, { message: 'marca| La marca debe tener al menos 2 caracteres' })
+  @MaxLength(50, { message: 'marca| La marca no debe exceder los 50 caracteres' })
   marca?: string;
 
   @IsOptional()
   @IsString({ message: 'version| La versión debe ser texto válido' })
+  @MinLength(1, { message: 'version| La versión debe tener al menos 1 caracter' })
+  @MaxLength(20, { message: 'version| La versión no debe exceder los 20 caracteres' })
   version?: string;
 
   @IsBoolean({ message: 'envioGratis| El campo envío gratis debe ser verdadero o falso' })
@@ -90,14 +106,8 @@ export class CreateProductDto {
   @IsObject({ message: 'imagenes| Las imágenes deben estar estructuradas como un objeto' })
   imagenes?: {
     original: string[];
-
-
     small: string[];
-
-
     medium: string[];
-
-
     large: string[];
   };
 }
