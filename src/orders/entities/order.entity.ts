@@ -6,7 +6,7 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'text', nullable: true })
   company: string;
 
   @Column()

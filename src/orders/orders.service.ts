@@ -31,7 +31,12 @@ export class OrdersService {
         ...createOrderDto
       });
 
-      return await this.orderRepository.save(order);
+      await this.orderRepository.save(order);
+
+      return {
+        "status": 201,
+        "message": "Tu compra se completó satisfactoriamente. En breve nos estaremos contactando contigo."
+      }
 
     } catch (error) {
       if (error instanceof BadRequestException) {

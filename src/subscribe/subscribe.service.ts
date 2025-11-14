@@ -25,7 +25,7 @@ export class SubscribesService {
     }
 
     const subscribe = this.subscribesRepository.create(createSubscribeDto);
-    const guardado = await this.subscribesRepository.save(subscribe);
+    await this.subscribesRepository.save(subscribe);
 
     return {
       status: 201,
